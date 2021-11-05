@@ -1,0 +1,21 @@
+version: "3.1"
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: deselect
+  api:
+    build: ./api/
+    ports:
+      - "5000:5000"
+  app:
+    build: ./app/
+    restart: always
+    entrypoint: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    volumes:
+      - ./app/nginx:/etc/nginx/conf.d
+    ports:
+      - "80:80"
